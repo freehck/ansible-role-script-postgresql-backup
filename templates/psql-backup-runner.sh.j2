@@ -1,0 +1,46 @@
+#!/bin/bash
+
+export HOST="{{ psql_backup_hostname }}"
+export TMPDIR="{{ psql_backup_tmpdir }}"
+
+export PSQL_HOST="{{ psql_backup_host }}"
+export PSQL_PORT="{{ psql_backup_port }}"
+export PSQL_USER="{{ psql_backup_user }}"
+export PSQL_PASS="{{ psql_backup_pass }}"
+export PSQL_DB="{{ psql_backup_db }}"
+
+export BKP_PREFIX="{{ psql_backup_archive_prefix }}"
+export BKP_TSTAMP_FORMAT="{{ psql_backup_archive_stamp }}"
+export BKP_WARN_SIZE="{{ psql_backup_warn_size }}"
+
+{% if psql_backup_backend_use_s3 %}
+export S3_STORAGE="yes"
+export S3_CFG="{{ psql_backup_s3cfg_path }}"
+export S3_BUCKET="{{ psql_backup_s3.bucket }}"
+{% endif %}
+
+{% if psql_backup_backend_use_scp %}
+export SCP_STORAGE="yes"
+export SCP_HOST="{{ psql_backup_scp_host }}"
+export SCP_USER="{{ psql_backup_scp_user }}"
+export SCP_IDENTITY="{{ psql_backup_scp_identity }}"
+export SCP_DST="{{ psql_backup_scp_dst }}"
+{% endif %}
+
+{% if psql_backup_slack_webhook is defined %}
+export SLACK_WH_URL="{{ psql_backup_slack_webhook }}"
+{% endif %}
+{% if psql_backup_gzip %}
+export BKP_GZIP="yes"
+{% endif %}
+{% if psql_backup_encrypt_aes %}
+export BKP_ENCRYPT_AES="yes"
+export BKP_ENCRYPT_AES_KEY={{ psql_backup_encrypt_aes_key }}
+{% endif %}
+
+if [ -t 1 ]; then
+    export DEBUG="yes"
+    exec {{ psql_backup_script }}
+else
+    exec {{ psql_backup_script }} >>{{ psql_backup_logfile }} 2>&1
+fi

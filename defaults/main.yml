@@ -1,0 +1,56 @@
+---
+psql_backup_script_dir: "/opt/scripts"
+psql_backup_script_name: "psql-backup.sh"
+psql_backup_script: "{{ psql_backup_script_dir }}/{{ psql_backup_script_name }}"
+
+psql_backup_custom_script_dir: "{{ psql_backup_script_dir }}"
+psql_backup_custom_script_name: "psql-backup-{% if psql_backup_db == '' %}all{% else %}{{ psql_backup_db }}{% endif %}.sh"
+psql_backup_custom_script: "{{ psql_backup_custom_script_dir }}/{{ psql_backup_custom_script_name }}"
+
+psql_backup_hostname: "{{ inventory_hostname }}"
+psql_backup_tmpdir: "/tmp"
+
+psql_backup_host: "localhost"
+psql_backup_port: "5432"
+psql_backup_user: "root"
+psql_backup_pass: ""
+psql_backup_db: ""
+
+psql_backup_conf_dir: "/etc/psql_backup"
+
+psql_backup_backend_use_s3: no
+psql_backup_s3cfg_path: "{{ psql_backup_conf_dir }}/s3cfg"
+#psql_backup_s3cfg_template: "s3cfg.j2"
+#psql_backup_s3:
+#  username: "s3user"
+#  access_key: "s3user-akey"
+#  secret_key: "s3user-skey"
+#  bucket: "bucket-name"
+
+psql_backup_backend_use_scp: no
+#psql_backup_scp_host: ""
+psql_backup_scp_user: "root"
+psql_backup_scp_dst: "/opt/backup"
+#psql_backup_scp_identity_src: ""
+psql_backup_scp_identity_dir: "{{ psql_backup_conf_dir }}"
+psql_backup_scp_identity_name: "id_rsa"
+psql_backup_scp_identity: "{{ psql_backup_scp_identity_dir }}/{{ psql_backup_scp_identity_name }}"
+
+psql_backup_archive_prefix: "{{ psql_backup_db }}"
+psql_backup_archive_stamp: "%F-%Hh%Mm%Ss"
+
+psql_backup_warn_size: "0"
+psql_backup_gzip: no
+psql_backup_encrypt_aes: no
+# key_src is just 256 bits of random: 'dd if=/dev/urandom of=aes256.key count=1 bs=32'
+# Also if you want to have a string password: 'pwgen -n1 -s 32 | tr -d '\n' >aes256.key'
+#psql_backup_encrypt_aes_key_src: ""
+psql_backup_encrypt_aes_key_dir: "{{ psql_backup_conf_dir }}"
+psql_backup_encrypt_aes_key_name: "aes256.key"
+psql_backup_encrypt_aes_key: "{{ psql_backup_encrypt_aes_key_dir }}/{{ psql_backup_encrypt_aes_key_name }}"
+#psql_backup_slack_webhook: ""
+
+# set this to 'yes' if you want playbook to store the custom script
+# name into 'psql_backup_last_generated_custom_script'
+psql_backup_save_facts_about_custom_script: no
+#psql_backup_last_generated_custom_script: ""

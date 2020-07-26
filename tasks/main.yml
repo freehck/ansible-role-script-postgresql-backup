@@ -1,0 +1,49 @@
+---
+
+- name: create script directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items: "{{ [ psql_backup_script_dir, psql_backup_custom_script_dir, psql_backup_conf_dir,  psql_backup_encrypt_aes_key_dir, psql_backup_scp_identity_dir ] | unique }}"
+
+- name: copy common script psql-backup.sh
+  copy:
+    src: psql-backup.sh
+    dest: "{{ psql_backup_script }}"
+    mode: '0755'
+
+- name: copy encryption key
+  copy:
+    src: "{{ psql_backup_encrypt_aes_key_src }}"
+    dest: "{{ psql_backup_encrypt_aes_key }}"
+    mode: '0600'
+  when: psql_backup_encrypt_aes
+
+- name: S3 backend -- create s3cfg config
+  template:
+    src: "{{ psql_backup_s3cfg_template }}"
+    dest: "{{ psql_backup_s3cfg_path }}"
+  when:
+    - psql_backup_backend_use_s3
+    - psql_backup_s3cfg_template is defined
+
+- name: SCP backend -- copy identity file
+  copy:
+    src: "{{ psql_backup_scp_identity_src }}"
+    dest: "{{ psql_backup_scp_identity }}"
+    mode: '0600'
+  when:
+    - psql_backup_backend_use_scp
+    - psql_backup_scp_identity_src is defined
+
+- name: generate custom script {{ psql_backup_custom_script_name }}
+  template:
+    src: psql-backup-runner.sh.j2
+    dest: "{{ psql_backup_custom_script }}"
+    mode: '0755'
+
+- name: save genarated custom script into variable
+  set_fact:
+    psql_backup_last_generated_custom_script: "{{ psql_backup_custom_script }}"
+  when: psql_backup_save_facts_about_custom_script
