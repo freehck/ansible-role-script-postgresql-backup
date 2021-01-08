@@ -5,7 +5,7 @@ set -euo pipefail
 
 # script specific vars
 PROGNAME=$(basename "$0")
-VERSION=1.0
+VERSION=1.0.2
 
 # defaults
 : ${HOST:=$(hostname)}
@@ -299,17 +299,17 @@ trap "rm -rf $bkpd;" err int exit
   slack "Start psql backup"
   msg "Start psql backup: $(date +%F-%T)"
 
-  msg -n "Dump database... "
   bkp="$BKP_PREFIX-$tstamp.sql"
-  $PGDUMP --dbname=postgresql://${PSQL_USER}:${PSQL_PASS}@${PSQL_HOST}:${PSQL_PORT}/${PSQL_DB} > $bkp
-  msg ok
   
   if [ "$BKP_GZIP" = "yes" ]; then
-      msg -n "Gzip dump... "
-      gzip "$bkp"
+      msg -n "Dump database and gzip it... "
       bkp="$bkp.gz"
-      msg ok
+      $PGDUMP --dbname=postgresql://${PSQL_USER}:${PSQL_PASS}@${PSQL_HOST}:${PSQL_PORT}/${PSQL_DB} | gzip -c > $bkp
+  else
+      msg -n "Dump database... "
+      $PGDUMP --dbname=postgresql://${PSQL_USER}:${PSQL_PASS}@${PSQL_HOST}:${PSQL_PORT}/${PSQL_DB} > $bkp
   fi
+  msg ok
 
   if [ "$BKP_ENCRYPT_AES" = "yes" ]; then
       msg -n "Encrypt dump with aes256 algorithm... "
