@@ -31,6 +31,7 @@ psql_backup_backend_use_scp: no
 #psql_backup_scp_host: ""
 psql_backup_scp_user: "root"
 psql_backup_scp_dst: "/opt/backup"
+psql_backup_local_dst: "/opt/backup"
 #psql_backup_scp_identity_src: ""
 psql_backup_scp_identity_dir: "{{ psql_backup_conf_dir }}"
 psql_backup_scp_identity_name: "id_rsa"
