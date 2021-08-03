@@ -105,41 +105,41 @@ parse_opts() {
     TEMP=$(getopt -o h --long help,debug,dbg,tmpdir:,bkp-prefix:,bkp-tstamp-format:,bkp-warn-size:,psql-host:,psql-user:,psql-pass:,psql-db:,s3-cfg:,s3-bucket:,scp-host:,scp-dst:,slack-webhook:,gzip,aes-key:,s3,scp,--scp-key: -- "$@")
     PARSE_OPTS_STATUS="$?"
     if [ "$PARSE_OPTS_STATUS" != 0 ]; then
-        err "Error in parsing options";
-        exit 1
+      err "Error in parsing options";
+      exit 1
     fi
     eval set -- "$TEMP"
     unset TEMP
 
     # parse cmdline options
     while true; do
-        case "$1" in
-            -h|--help) print_help; exit 0;;
-            --debug|--dbg) DEBUG="yes"; shift;;
-            --tmpdir) TMPDIR="$2"; shift 2;;
-            --bkp-prefix) BKP_PREFIX="$2"; shift 2;;
-            --bkp-tstamp-format) BKP_TSTAMP_FORMAT="$2"; shift 2;;
-            --bkp-warn-size) BKP_WARN_SIZE="$2"; shift 2;;
-            --psql-host) PSQL_HOST="$2"; shift 2;;
-            --psql-port) PSQL_PORT="$2"; shift 2;;
-            --psql-authdb) PSQL_AUTHDB="$2"; shift 2;;
-            --psql-user) PSQL_USER="$2"; shift 2;;
-            --psql-pass) PSQL_PASS="$2"; shift 2;;
-            --s3) S3_STORAGE="yes"; shift;;
-            --s3-cfg) S3_STORAGE="yes"; S3_CFG="$2"; shift 2;;
-            --s3-bucket) S3_STORAGE="yes"; S3_BUCKET="$2"; shift 2;;
-            --scp) SCP_STORAGE="yes"; shift 2;;
-            --scp-host) SCP_STORAGE="yes"; SCP_HOST="$2"; shift 2;;
-            --scp-user) SCP_STORAGE="yes"; SCP_USER="$2"; shift 2;;
-            --scp-dst) SCP_STORAGE="yes"; SCP_DST="$2"; shift 2;;
-            --local-dst) LOCAL_STORAGE="yes"; LOCAL_DST="$2"; shift 2;;
-            --scp-key) SCP_STORAGE="yes"; SCP_IDENTITY="$2"; shift 2;;
-            --slack-webhook) SLACK_WH_URL="$2"; shift 2;;
-            --gzip) BKP_GZIP="yes"; shift;;
-            --aes-key) BKP_ENCRYPT_AES="yes"; BKP_ENCRYPT_AES_KEY="$2"; shift 2;;
-            --) shift; break;;
-            *) err "Unknown option $1"; exit 2;;
-        esac
+      case "$1" in
+          -h|--help) print_help; exit 0;;
+          --debug|--dbg) DEBUG="yes"; shift;;
+          --tmpdir) TMPDIR="$2"; shift 2;;
+          --bkp-prefix) BKP_PREFIX="$2"; shift 2;;
+          --bkp-tstamp-format) BKP_TSTAMP_FORMAT="$2"; shift 2;;
+          --bkp-warn-size) BKP_WARN_SIZE="$2"; shift 2;;
+          --psql-host) PSQL_HOST="$2"; shift 2;;
+          --psql-port) PSQL_PORT="$2"; shift 2;;
+          --psql-authdb) PSQL_AUTHDB="$2"; shift 2;;
+          --psql-user) PSQL_USER="$2"; shift 2;;
+          --psql-pass) PSQL_PASS="$2"; shift 2;;
+          --s3) S3_STORAGE="yes"; shift;;
+          --s3-cfg) S3_STORAGE="yes"; S3_CFG="$2"; shift 2;;
+          --s3-bucket) S3_STORAGE="yes"; S3_BUCKET="$2"; shift 2;;
+          --scp) SCP_STORAGE="yes"; shift 2;;
+          --scp-host) SCP_STORAGE="yes"; SCP_HOST="$2"; shift 2;;
+          --scp-user) SCP_STORAGE="yes"; SCP_USER="$2"; shift 2;;
+          --scp-dst) SCP_STORAGE="yes"; SCP_DST="$2"; shift 2;;
+          --local-dst) LOCAL_STORAGE="yes"; LOCAL_DST="$2"; shift 2;;
+          --scp-key) SCP_STORAGE="yes"; SCP_IDENTITY="$2"; shift 2;;
+          --slack-webhook) SLACK_WH_URL="$2"; shift 2;;
+          --gzip) BKP_GZIP="yes"; shift;;
+          --aes-key) BKP_ENCRYPT_AES="yes"; BKP_ENCRYPT_AES_KEY="$2"; shift 2;;
+          --) shift; break;;
+          *) err "Unknown option $1"; exit 2;;
+      esac
     done
 }
 
@@ -157,14 +157,14 @@ PSQL_USER=$PSQL_USER
 PSQL_PASS=$PSQL_PASS
 EOF
     if [ "$S3_STORAGE" = "yes" ]; then
-        errcat <<EOF
+      errcat <<EOF
 ----------- S3 Storage ------------
 S3_CFG=$S3_CFG
 S3_BUCKET=$S3_BUCKET
 EOF
     fi
     if [ "$SCP_STORAGE" = "yes" ]; then
-        errcat <<EOF
+      errcat <<EOF
 ----------- SCP Storage -----------
 SCP_HOST=$SCP_HOST
 SCP_USER=$SCP_USER
@@ -173,13 +173,13 @@ SCP_IDENTITY=$SCP_IDENTITY
 EOF
     fi
     if [ "$LOCAL_STORAGE" = "yes" ]; then
-        errcat <<EOF
+      errcat <<EOF
 ----------- LOCAL Storage -----------
 LOCAL_DST=$LOCAL_DST
 EOF
     fi
     if [ -n "$SLACK_WH_URL" ]; then
-        errcat <<EOF
+      errcat <<EOF
 ---------- Integration -----------
 SLACK_WH_URL=$SLACK_WH_URL
 EOF
@@ -188,7 +188,7 @@ EOF
 -------- Special Abilities -------
 EOF
     if [ "$BKP_GZIP" = "yes" ]; then
-        errcat <<EOF
+      errcat <<EOF
 BKP_GZIP=$BKP_GZIP
 EOF
     fi
@@ -208,8 +208,8 @@ check_conf() {
 
     # at least one storage exist
     if [ "$S3_STORAGE" = "no" ] && [ "$SCP_STORAGE" = "no" ] && [ "$LOCAL_STORAGE" = "no" ]; then
-        found_conf_errors="yes"
-        errcat <<EOF
+      found_conf_errors="yes"
+      errcat <<EOF
 You must specify at least one backend to store backups. Check --local-dst, --s3 or --scp options.
 EOF
     fi
@@ -217,20 +217,20 @@ EOF
     # s3 storage
     if [ "$S3_STORAGE" = "yes" ]; then
         if [ -z "$S3_BUCKET" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use s3 storage, you shall specify s3 bucket. Check --s3-bucket option.
 EOF
         fi
         if [ -z "$S3_CFG" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use s3 storage, you shall specify path to the s3cfg file. Check --s3-cfg option.
 EOF
         fi
         if [ ! -f "$S3_CFG" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 S3 configuration file not found: $S3_CFG
 EOF
         fi
@@ -239,20 +239,20 @@ EOF
     # scp storage
     if [ "$SCP_STORAGE" = "yes" ]; then
         if [ -z "$SCP_HOST" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use scp storage, you shall specify host. Check --scp-host option.
 EOF
         fi
         if [ -z "$SCP_DST" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use scp storage, you shall specify storage host destination dir. Check --scp-dst option.
 EOF
         fi
         if [ -z "$SCP_IDENTITY" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use scp storage, you shall specify identity key file. Check --scp-key option.
 EOF
         fi
@@ -261,43 +261,43 @@ EOF
     # local storagew
     if [ "$LOCAL_STORAGE" = "yes" ]; then
         if [ -z "$LOCAL_DST" ]; then
-            found_conf_errors="yes"
-            errcat <<EOF
+          found_conf_errors="yes"
+          errcat <<EOF
 When you use local storage, you shall specify storage destination dir. Check --local-dst option.
 EOF
         fi
     fi
     # tstamp format
     if ! date +"$BKP_TSTAMP_FORMAT" &>/dev/null; then
-        found_conf_errors="yes"
-        errcat <<EOF
+      found_conf_errors="yes"
+      errcat <<EOF
 Invalid time format: "$BKP_TSTAMP_FORMAT". Check --bkp-tstamp-format option.
 EOF
     fi
 
     # aes key file
     if [ "$BKP_ENCRYPT_AES" = "yes" ] && [ ! -f "$BKP_ENCRYPT_AES_KEY" ]; then
-        found_conf_errors="yes"
-        errcat <<EOF
+      found_conf_errors="yes"
+      errcat <<EOF
 AES Key not found: $BKP_ENCRYPT_AES_KEY. Check --aes-key option.
 EOF
     fi
 
     # --- stop if errors found ---
     if [ "$found_conf_errors" = "yes" ]; then
-        exit 3
+      exit 3
     fi
 }
 
 slack() {
     if [ -n "$SLACK_WH_URL" ]; then
-        text="$@"
-        set +e
-        $CURL -s -X POST -H 'Content-type: application/json' \
-              --data '{"text":"'"[$HOST] $text"'"}' \
-              https://hooks.slack.com/services/$SLACK_WH_URL \
-              &>/dev/null
-        set -e
+      text="$@"
+      set +e
+      $CURL -s -X POST -H 'Content-type: application/json' \
+            --data '{"text":"'"[$HOST] $text"'"}' \
+            https://hooks.slack.com/services/$SLACK_WH_URL \
+            &>/dev/null
+      set -e
     fi
 }
 
