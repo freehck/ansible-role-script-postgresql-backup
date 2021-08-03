@@ -355,7 +355,7 @@ trap "rm -rf $bkpd;" err int exit
     if [ "$LOCAL_STORAGE" = "yes" ]; then
       msg -n "Copy backup file to dir at local storage..."
       mkdir -p $LOCAL_DST
-      cp $bkp $LOCAL_DST/$bkp >/dev/null
+      mv $bkp $LOCAL_DST/$bkp >/dev/null
       msg ok
   fi
 
