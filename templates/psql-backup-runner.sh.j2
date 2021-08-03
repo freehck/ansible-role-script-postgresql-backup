@@ -27,6 +27,11 @@ export SCP_IDENTITY="{{ psql_backup_scp_identity }}"
 export SCP_DST="{{ psql_backup_scp_dst }}"
 {% endif %}
 
+{% if psql_backup_backend_use_local %}
+export LOCAL_STORAGE="yes"
+export LOCAL_DST="{{ psql_backup_local_dst }}"
+{% endif %}
+
 {% if psql_backup_slack_webhook is defined %}
 export SLACK_WH_URL="{{ psql_backup_slack_webhook }}"
 {% endif %}
