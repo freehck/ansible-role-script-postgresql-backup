@@ -30,7 +30,7 @@ VERSION=1.0.2
 : ${S3_STORAGE:=no}
 
 : ${SCP_HOST:=""}
-: ${SCP_USER:="$USER"}
+: ${SCP_USER:=${USER:-}}
 : ${SCP_DST:=""}
 : ${SCP_IDENTITY:=""}
 : ${SCP_STORAGE:=no}
